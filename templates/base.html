@@ -35,6 +35,8 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
     crossorigin="anonymous"></script>
+  <!-- Stripe -->
+  <script src="https://js.stripe.com/v3/"></script>
   {% endblock %}
 
   {% block extra_js %}
@@ -126,7 +128,8 @@
 
   {% if messages %}
   <div class="message-container">
-    {% for message in messages %}
+    
+      {% for message in messages %}
           {% with message.level as level %}
               {% if level == 40 %}
                   {% include 'includes/toasts/toast_error.html' %}
@@ -139,7 +142,6 @@
               {% endif %}
           {% endwith %}
       {% endfor %}
-
   </div>
   {% endif %}
 
@@ -151,9 +153,9 @@
 
   {% block postloadjs %}
 
-    <script type="text/javascript">
-      $('.toast').toast('show');
-    </script>
+  <script type="text/javascript">
+    $('.toast').toast('show');
+  </script>
 
   {% endblock %}
 
