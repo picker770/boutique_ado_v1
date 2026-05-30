@@ -185,39 +185,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-if 'USE_AWS' in os.environ:
-    # Bucket Config
-    AWS_STORAGE_BUCKET_NAME = 'crz5895-boutique-ado-v3'
-    AWS_S3_REGION_NAME = 'eu-north-1'
-    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-
-    # Static files
-    STATICFILES_LOCATION = 'static'
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/'
-    STATICFILES_STORAGE = 'custom_storages.StaticStorage'
-
-    # Media files
-    MEDIAFILES_LOCATION = 'media'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/'
-    DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
-    
-    # S3 settings
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_QUERYSTRING_AUTH = False
-    
-    # IMPORTANT: For Django 3.2+ use STORAGES setting
-    STORAGES = {
-        'default': {
-            'BACKEND': 'custom_storages.MediaStorage',
-        },
-        'staticfiles': {
-            'BACKEND': 'custom_storages.StaticStorage',
-        },
-    }
-
-    
+   
 
 
 # Stripe
@@ -235,4 +203,26 @@ DEFAULT_FROM_EMAIL = 'boutiqueado@example.com'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
+if 'USE_AWS' in os.environ:
+    AWS_STORAGE_BUCKET_NAME = 'crz5895-boutique-ado-v3'
+    AWS_S3_REGION_NAME = 'eu-north-1'
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    
+    STATICFILES_LOCATION = 'static'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/'
+    STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+    
+    MEDIAFILES_LOCATION = 'media'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
+    
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_QUERYSTRING_AUTH = False
+    
+    # ADD THIS - Forces Django to use S3
+    STORAGES = {
+        'staticfiles': {'BACKEND': 'custom_storages.StaticStorage'},
+        'default': {'BACKEND': 'custom_storages.MediaStorage'},
+    }
