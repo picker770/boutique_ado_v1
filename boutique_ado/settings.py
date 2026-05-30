@@ -177,13 +177,30 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-
 
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+if 'USE_AWS' in os.environ:
+    # Bucket Config
+    AWS_STORAGE_BUCKET_NAME = 'crz5895-boutique-ado-v3'
+    AWS_S3_REGION_NAME = 'us-east-1'
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    
+    # Static and media files
+    STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+    STATICFILES_LOCATION = 'static'
+    DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
+    MEDIAFILES_LOCATION = 'media'
+
+    # Override static and media URLs in production
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/'
+    
+    
 
    
 
@@ -203,41 +220,6 @@ DEFAULT_FROM_EMAIL = 'boutiqueado@example.com'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-if 'USE_AWS' in os.environ:
-    # Bucket Config
-    AWS_STORAGE_BUCKET_NAME = 'crz5895-boutique-ado-v3'
-    AWS_S3_REGION_NAME = 'eu-north-1'
-    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-    
-    # Static files - Override to use S3
-    STATICFILES_LOCATION = 'static'
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/'
-    STATICFILES_STORAGE = 'custom_storages.StaticStorage'  # This sends files to S3
-    
-    # Media files
-    MEDIAFILES_LOCATION = 'media'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/'
-    DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
-    
-    # S3 Settings
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_QUERYSTRING_AUTH = False
 
 
-# FORCE S3 STORAGE - MUST BE LAST LINE
-if 'USE_AWS' in os.environ:
-    import django
-    from django.conf import settings
-    
-    # Override the storage backends directly
-    settings.STATICFILES_STORAGE = 'custom_storages.StaticStorage'
-    settings.DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
-    
-    # For Django 3.2+
-    if hasattr(settings, 'STORAGES'):
-        settings.STORAGES = {
-            'staticfiles': {'BACKEND': 'custom_storages.StaticStorage'},
-            'default': {'BACKEND': 'custom_storages.MediaStorage'},
-        }
+
