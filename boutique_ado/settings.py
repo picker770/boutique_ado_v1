@@ -218,3 +218,8 @@ DEFAULT_FROM_EMAIL = 'boutiqueado@example.com'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# DEBUG - Add this right before your AWS config
+import sys
+print(f"USE_AWS in os.environ: {'USE_AWS' in os.environ}", file=sys.stderr)
+print(f"All env vars starting with AWS: {[k for k in os.environ.keys() if 'AWS' in k]}", file=sys.stderr)
+
