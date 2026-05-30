@@ -224,3 +224,20 @@ if 'USE_AWS' in os.environ:
     # S3 Settings
     AWS_DEFAULT_ACL = 'public-read'
     AWS_QUERYSTRING_AUTH = False
+
+
+# FORCE S3 STORAGE - MUST BE LAST LINE
+if 'USE_AWS' in os.environ:
+    import django
+    from django.conf import settings
+    
+    # Override the storage backends directly
+    settings.STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+    settings.DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
+    
+    # For Django 3.2+
+    if hasattr(settings, 'STORAGES'):
+        settings.STORAGES = {
+            'staticfiles': {'BACKEND': 'custom_storages.StaticStorage'},
+            'default': {'BACKEND': 'custom_storages.MediaStorage'},
+        }
