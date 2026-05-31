@@ -194,10 +194,20 @@ if 'USE_AWS' in os.environ:
 
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.eu-west-2.amazonaws.com'
 
-    STATICFILES_STORAGE = 'custom_storages.StaticStorage'
-    DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
+    # IMPORTANT FIX (this is what you were missing)
+    AWS_LOCATION = 'static'
 
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    AWS_DEFAULT_ACL = None
+    AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+    }
+
+    # STATIC
+    STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+
+    # MEDIA
+    DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
        
 
