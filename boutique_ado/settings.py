@@ -189,6 +189,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 USE_AWS = os.environ.get('USE_AWS') == 'True'
 
+USE_AWS = os.environ.get('USE_AWS') == 'True'
+
 if USE_AWS:
 
     AWS_STORAGE_BUCKET_NAME = 'crz5895-boutique-ado-v3a'
@@ -200,15 +202,14 @@ if USE_AWS:
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
     AWS_DEFAULT_ACL = None
-
     AWS_LOCATION = 'static'
 
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    # ✅ IMPORTANT: use ONLY custom storage
+    STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+    DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
 
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
-
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+    STATIC_URL = '/static/'
+    MEDIA_URL = '/media/'
 
     
 
@@ -225,6 +226,8 @@ DEFAULT_FROM_EMAIL = 'boutiqueado@example.com'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
 
 
 
