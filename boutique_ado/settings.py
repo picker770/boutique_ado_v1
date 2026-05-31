@@ -28,7 +28,7 @@ ALLOWED_HOSTS = [
 
 
 # =========================
-# APPS
+# APPLICATIONS
 # =========================
 
 INSTALLED_APPS = [
@@ -72,7 +72,6 @@ MIDDLEWARE = [
 
 
 ROOT_URLCONF = 'boutique_ado.urls'
-
 WSGI_APPLICATION = 'boutique_ado.wsgi.application'
 
 
@@ -140,7 +139,7 @@ USE_TZ = True
 
 
 # =========================
-# STATIC + MEDIA (LOCAL)
+# STATIC FILES (LOCAL)
 # =========================
 
 STATIC_URL = '/static/'
@@ -149,6 +148,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+
+# =========================
+# MEDIA FILES (LOCAL)
+# =========================
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -179,7 +183,7 @@ if USE_AWS:
 
 
 # =========================
-# STORAGE BACKENDS (Django 6)
+# STORAGE BACKENDS (IMPORTANT)
 # =========================
 
 STORAGES = {
@@ -193,7 +197,7 @@ STORAGES = {
 
 
 # =========================
-# AUTH / ALLAUTH
+# AUTHENTICATION
 # =========================
 
 AUTHENTICATION_BACKENDS = [
@@ -221,7 +225,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # =========================
-# MESSAGE STORAGE
+# MESSAGES
 # =========================
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
