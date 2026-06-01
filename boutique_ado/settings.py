@@ -139,19 +139,19 @@ USE_TZ = True
 
 
 # =========================
-# STATIC FILES (LOCAL DEFAULT)
+# STATIC FILES
 # =========================
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 # =========================
-# MEDIA FILES (LOCAL DEFAULT)
+# MEDIA FILES
 # =========================
 
 MEDIA_URL = '/media/'
@@ -159,7 +159,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # =========================
-# AWS / S3 (PRODUCTION)
+# AWS / S3 (PRODUCTION ONLY)
 # =========================
 
 USE_AWS = os.environ.get('USE_AWS', '').lower() == 'true'
@@ -181,10 +181,7 @@ if USE_AWS:
         'CacheControl': 'max-age=94608000',
     }
 
-    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
-    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
-
-    # IMPORTANT: use built-in S3Boto3Storage (NOT custom_storages here)
+    # IMPORTANT: correct separation of static + media
     STORAGES = {
         "default": {
             "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
@@ -193,6 +190,10 @@ if USE_AWS:
             "BACKEND": "storages.backends.s3boto3.S3ManifestStaticStorage",
         },
     }
+
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+
 
 # =========================
 # AUTHENTICATION
