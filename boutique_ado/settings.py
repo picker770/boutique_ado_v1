@@ -139,7 +139,7 @@ USE_TZ = True
 
 
 # =========================
-# STATIC FILES (LOCAL)
+# STATIC FILES (LOCAL DEFAULT)
 # =========================
 
 STATIC_URL = '/static/'
@@ -151,7 +151,7 @@ STATICFILES_DIRS = [
 
 
 # =========================
-# MEDIA FILES (LOCAL)
+# MEDIA FILES (LOCAL DEFAULT)
 # =========================
 
 MEDIA_URL = '/media/'
@@ -159,18 +159,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # =========================
-# AWS / S3
+# AWS / S3 (PRODUCTION)
 # =========================
 
 USE_AWS = os.environ.get('USE_AWS') == 'True'
 
 if USE_AWS:
-
-    # Cache control
-    AWS_S3_OBJECT_PARAMETERS = {
-        'Expires': 'Thu, 31 Dec 2099 20:00:00 GMT',
-        'CacheControl': 'max-age=94608000',
-    }
 
     AWS_STORAGE_BUCKET_NAME = 'crz5895-boutique-ado-v3a'
     AWS_S3_REGION_NAME = 'eu-west-2'
@@ -179,7 +173,8 @@ if USE_AWS:
     AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
-    
+
+    # URLs
     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 
@@ -190,19 +185,21 @@ if USE_AWS:
         'CacheControl': 'max-age=94608000',
     }
 
-
-# =========================
-# STORAGE BACKENDS (IMPORTANT)
-# =========================
-
-STORAGES = {
-    "default": {
-        "BACKEND": "boutique_ado.custom_storages.MediaStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "boutique_ado.custom_storages.StaticStorage",
-    },
-}
+    # STORAGE BACKENDS (FIXED - NO custom_storages)
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "location": "media",
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3ManifestStaticStorage",
+            "OPTIONS": {
+                "location": "static",
+            },
+        },
+    }
 
 
 # =========================
