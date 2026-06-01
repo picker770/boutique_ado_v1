@@ -178,7 +178,10 @@ if USE_AWS:
     AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.eu-west-2.amazonaws.com'
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
+    
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 
     AWS_DEFAULT_ACL = None
     AWS_QUERYSTRING_AUTH = False
@@ -194,10 +197,10 @@ if USE_AWS:
 
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "BACKEND": "custom_storages.MediaStorage",
     },
     "staticfiles": {
-        "BACKEND": "storages.backends.s3boto3.S3ManifestStaticStorage",
+        "BACKEND": "custom_storages.StaticStorage",
     },
 }
 
