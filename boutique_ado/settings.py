@@ -181,13 +181,13 @@ if USE_AWS:
         'CacheControl': 'max-age=94608000',
     }
 
-    # IMPORTANT: correct separation of static + media
+    # IMPORTANT: USE YOUR CUSTOM STORAGE
     STORAGES = {
         "default": {
-            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "BACKEND": "boutique_ado.custom_storages.MediaStorage",
         },
         "staticfiles": {
-            "BACKEND": "storages.backends.s3boto3.S3ManifestStaticStorage",
+            "BACKEND": "boutique_ado.custom_storages.StaticStorage",
         },
     }
 
