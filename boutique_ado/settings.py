@@ -197,10 +197,10 @@ if USE_AWS:
 
 STORAGES = {
     "default": {
-        "BACKEND": "custom_storages.MediaStorage",
+        "BACKEND": "boutique_ado.custom_storages.MediaStorage",
     },
     "staticfiles": {
-        "BACKEND": "custom_storages.StaticStorage",
+        "BACKEND": "boutique_ado.custom_storages.StaticStorage",
     },
 }
 
