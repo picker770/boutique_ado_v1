@@ -162,7 +162,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # AWS / S3 (PRODUCTION)
 # =========================
 
-USE_AWS = os.environ.get('USE_AWS') == 'True'
+USE_AWS = os.environ.get('USE_AWS', '').lower() == 'true'
 
 if USE_AWS:
 
