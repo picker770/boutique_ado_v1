@@ -9,7 +9,7 @@ from .forms import ProductForm
 
 
 def all_products(request):
-    """View to show all products with sorting, filtering, and search"""
+    """ View all products with sorting, filtering, and search """
 
     products = Product.objects.all()
 
@@ -18,19 +18,18 @@ def all_products(request):
     sort = None
     direction = None
 
+    # ------------------------
+    # SEARCH / FILTER / SORT
+    # ------------------------
     if request.GET:
 
-        # -------------------------
         # CATEGORY FILTER
-        # -------------------------
         if 'category' in request.GET:
             categories = request.GET['category'].split(',')
             products = products.filter(category__name__in=categories)
             categories = Category.objects.filter(name__in=categories)
 
-        # -------------------------
         # SEARCH
-        # -------------------------
         if 'q' in request.GET:
             query = request.GET['q']
 
@@ -41,14 +40,11 @@ def all_products(request):
             queries = Q(name__icontains=query) | Q(description__icontains=query)
             products = products.filter(queries)
 
-        # -------------------------
-        # SORTING (SAFE)
-        # -------------------------
+        # SORTING
         if 'sort' in request.GET:
             sortkey = request.GET.get('sort')
             direction = request.GET.get('direction', 'asc')
 
-            # safe mapping of allowed sort fields
             if sortkey == 'name':
                 products = products.annotate(lower_name=Lower('name'))
                 sortkey = 'lower_name'
@@ -63,10 +59,9 @@ def all_products(request):
                 sortkey = 'rating'
 
             else:
-                sortkey = 'name'
                 products = products.annotate(lower_name=Lower('name'))
+                sortkey = 'lower_name'
 
-            # apply direction
             if direction == 'desc':
                 sortkey = f'-{sortkey}'
 
@@ -86,23 +81,21 @@ def all_products(request):
 
 
 def product_detail(request, product_id):
-    """View to show a single product"""
+    """ Single product view """
 
     product = get_object_or_404(Product, pk=product_id)
 
-    context = {
+    return render(request, 'products/product_detail.html', {
         'product': product,
-    }
-
-    return render(request, 'products/product_detail.html', context)
+    })
 
 
 @login_required
 def add_product(request):
-    """Add a product (superuser only)"""
+    """ Add product """
 
     if not request.user.is_superuser:
-        messages.error(request, "Sorry, only store owners can do that.")
+        messages.error(request, "Only store owners can do that.")
         return redirect(reverse('home'))
 
     if request.method == 'POST':
@@ -110,23 +103,25 @@ def add_product(request):
 
         if form.is_valid():
             product = form.save()
-            messages.success(request, "Successfully added product!")
+            messages.success(request, "Product added successfully!")
             return redirect(reverse('product_detail', args=[product.id]))
         else:
-            messages.error(request, "Failed to add product. Please check the form.")
+            messages.error(request, "Form invalid.")
 
     else:
         form = ProductForm()
 
-    return render(request, 'products/add_product.html', {'form': form})
+    return render(request, 'products/add_product.html', {
+        'form': form
+    })
 
 
 @login_required
 def edit_product(request, product_id):
-    """Edit a product (superuser only)"""
+    """ Edit product """
 
     if not request.user.is_superuser:
-        messages.error(request, "Sorry, only store owners can do that.")
+        messages.error(request, "Only store owners can do that.")
         return redirect(reverse('home'))
 
     product = get_object_or_404(Product, pk=product_id)
@@ -136,14 +131,13 @@ def edit_product(request, product_id):
 
         if form.is_valid():
             form.save()
-            messages.success(request, "Successfully updated product!")
+            messages.success(request, "Product updated!")
             return redirect(reverse('product_detail', args=[product.id]))
         else:
-            messages.error(request, "Failed to update product. Please check the form.")
+            messages.error(request, "Update failed.")
 
     else:
         form = ProductForm(instance=product)
-        messages.info(request, f"You are editing {product.name}")
 
     return render(request, 'products/edit_product.html', {
         'form': form,
@@ -153,10 +147,10 @@ def edit_product(request, product_id):
 
 @login_required
 def delete_product(request, product_id):
-    """Delete a product (superuser only)"""
+    """ Delete product """
 
     if not request.user.is_superuser:
-        messages.error(request, "Sorry, only store owners can do that.")
+        messages.error(request, "Only store owners can do that.")
         return redirect(reverse('home'))
 
     product = get_object_or_404(Product, pk=product_id)
