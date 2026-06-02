@@ -187,6 +187,9 @@ STORAGES = {
     "default": {
         "BACKEND": "custom_storages.MediaStorage",
     },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
 }
 
 
