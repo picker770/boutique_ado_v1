@@ -8,13 +8,13 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load env.py locally (ONLY for development)
+# Load env.py locally only
 if os.path.isfile('env.py'):
     import env
 
 
 # -------------------------
-# CORE SETTINGS
+# CORE
 # -------------------------
 
 SECRET_KEY = os.environ.get('SECRET_KEY', '')
@@ -55,8 +55,9 @@ INSTALLED_APPS = [
     'storages',
 ]
 
+
 # -------------------------
-# CRISPY FORMS
+# CRISPY
 # -------------------------
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ["bootstrap4"]
@@ -122,7 +123,7 @@ DATABASES = {
 
 
 # -------------------------
-# PASSWORDS
+# PASSWORD VALIDATION
 # -------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -144,7 +145,7 @@ USE_TZ = True
 
 
 # -------------------------
-# STATIC FILES
+# STATIC FILES (CLEAN FIX)
 # -------------------------
 
 STATIC_URL = '/static/'
@@ -152,16 +153,20 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
+# WhiteNoise (IMPORTANT FIX)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
 # -------------------------
-# MEDIA (LOCAL DEFAULT)
+# MEDIA (LOCAL FALLBACK)
 # -------------------------
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # -------------------------
-# AWS / S3 SWITCH
+# AWS / S3
 # -------------------------
 
 USE_AWS = os.environ.get('USE_AWS', 'False').lower() == 'true'
@@ -180,8 +185,15 @@ if USE_AWS:
         'CacheControl': 'max-age=86400',
     }
 
-    DEFAULT_FILE_STORAGE = 'boutique_ado.custom_storages.MediaStorage'
-    STATICFILES_STORAGE = 'boutique_ado.custom_storages.StaticStorage'
+    # FIX: correct Django 4+ storage settings
+    STORAGES = {
+        "default": {
+            "BACKEND": "boutique_ado.custom_storages.MediaStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "boutique_ado.custom_storages.StaticStorage",
+        },
+    }
 
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
@@ -225,8 +237,9 @@ STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
 STRIPE_WH_SECRET = os.getenv('STRIPE_WH_SECRET', '')
 
+
 # -------------------------
-# DELIVERY SETTINGS
+# DELIVERY
 # -------------------------
 
 FREE_DELIVERY_THRESHOLD = 50
