@@ -5,6 +5,7 @@ Django settings for boutique_ado project.
 import os
 import dj_database_url
 from pathlib import Path
+from boutique_ado.custom_storages import StaticStorage, MediaStorage
 
 if os.path.isfile('env.py'):
     import env
@@ -147,7 +148,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 # =========================
@@ -177,19 +178,8 @@ if USE_AWS:
     AWS_DEFAULT_ACL = None
     AWS_QUERYSTRING_AUTH = False
 
-    AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=94608000',
-    }
-
-    # IMPORTANT: USE YOUR CUSTOM STORAGE
-    STORAGES = {
-        "default": {
-            "BACKEND": "boutique_ado.custom_storages.MediaStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "boutique_ado.custom_storages.StaticStorage",
-        },
-    }
+    STATICFILES_STORAGE = "boutique_ado.custom_storages.StaticStorage"
+    DEFAULT_FILE_STORAGE = "boutique_ado.custom_storages.MediaStorage"
 
     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
